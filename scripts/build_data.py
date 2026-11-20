@@ -11,6 +11,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from openpyxl import load_workbook
+import sxtwl
 from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +62,7 @@ def short_name(name: str) -> str:
     mapping = {
         "公司年会活动日": "公司年会",
         "年终盘点预定日": "年终盘点",
+        "年终盘点调休": "年终盘点",
         "周六上班": "调班上班",
         "周日上班": "调班上班",
         "清明节": "清明",
@@ -72,6 +74,76 @@ def short_name(name: str) -> str:
         "春节": "春节",
     }
     return mapping.get(base, base)
+
+
+JQ = ['冬至','小寒','大寒','立春','雨水','惊蛰','春分','清明','谷雨','立夏','小满','芒种',
+      '夏至','小暑','大暑','立秋','处暑','白露','秋分','寒露','霜降','立冬','小雪','大雪']
+MN = ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','腊月']
+TRAD = {(1,1):"春节",(1,15):"元宵节",(2,2):"龙抬头",(3,3):"上巳节",(5,5):"端午节",
+        (7,7):"七夕",(7,15):"中元节",(8,15):"中秋节",(9,9):"重阳节",(12,8):"腊八节",(12,23):"小年"}
+SOLAR_FEST = {(1,1):"元旦",(2,14):"情人节",(3,8):"妇女节",(3,12):"植树节",(5,1):"劳动节",(5,4):"青年节",
+         (6,1):"儿童节",(7,1):"建党节",(8,1):"建军节",(9,10):"教师节",(10,1):"国庆节",(12,25):"圣诞节"}
+
+
+def dayname(ld: int) -> str:
+    if ld == 10:
+        return "初十"
+    if ld == 20:
+        return "二十"
+    if ld == 30:
+        return "三十"
+    t = "一二三四五六七八九"
+    if ld < 10:
+        return "初" + t[ld - 1]
+    if ld < 20:
+        return "十" + t[ld - 11]
+    return "廿" + t[ld - 21]
+
+
+def lunar_record(d: date) -> dict:
+    """Build a day record with sxtwl (Beijing civil date)."""
+    s = sxtwl.fromSolar(d.year, d.month, d.day)
+    lm, ld, leap = s.getLunarMonth(), s.getLunarDay(), s.isLunarLeap()
+    lshow = ("闰" if leap else "") + MN[lm - 1] + dayname(ld)
+    jq = JQ[s.getJieQi()] if s.hasJieQi() else None
+    tr = None if leap else TRAD.get((lm, ld))
+    nxt_d = d + timedelta(days=1)
+    nxt = sxtwl.fromSolar(nxt_d.year, nxt_d.month, nxt_d.day)
+    if nxt.getLunarMonth() == 1 and nxt.getLunarDay() == 1 and not nxt.isLunarLeap():
+        tr = "除夕"
+    so = SOLAR_FEST.get((d.month, d.day))
+    disp = tr or so or jq or ((("闰" if leap else "") + MN[lm - 1]) if ld == 1 else dayname(ld))
+    return {
+        "date": iso(d),
+        "weekday": d.weekday(),
+        "weekdayName": "星期" + "一二三四五六日"[d.weekday()],
+        "lunarMonth": int(lm),
+        "lunarDay": int(ld),
+        "lunarText": lshow,
+        "solarTerm": jq,
+        "traditionalFestival": tr,
+        "gregorianFestival": so,
+        "label": disp or "",
+        "holiday": None,
+        "kind": "工作",
+        "companyEvents": [],
+    }
+
+
+# 2026年11、12月行事历调整（通知 / TCC 2026年度行事历执行案）。只列例外日期。
+SRC_2026 = "2026年11、12月行事历调整通知"
+HOLIDAYS_2026 = [
+    {"date": "2026-11-21", "type": "班", "name": "周六上班（与11/30盘点日调班）", "short": "调班上班", "source": SRC_2026},
+    {"date": "2026-11-29", "type": "休", "name": "年终盘点预定日", "short": "年终盘点", "source": SRC_2026},
+    {"date": "2026-11-30", "type": "休", "name": "年终盘点预定日（与11/21调班）", "short": "年终盘点", "source": SRC_2026},
+    {"date": "2026-12-01", "type": "休", "name": "年终盘点调休（与12/5调班）", "short": "年终盘点", "source": SRC_2026},
+    {"date": "2026-12-05", "type": "班", "name": "周六上班（与12/1调休）", "short": "调班上班", "source": SRC_2026},
+]
+EVENTS_2026 = [
+    {"date": "2026-11-29", "name": "年终盘点", "note": "调整后预定日"},
+    {"date": "2026-11-30", "name": "年终盘点", "note": "与11/21调班"},
+    {"date": "2026-12-01", "name": "年终盘点", "note": "调休，与12/5调班"},
+]
 
 
 def load_source():
@@ -106,6 +178,9 @@ def load_source():
             "note": (str(row[2]).strip() if row[2] else ""),
         })
 
+    holidays.extend(HOLIDAYS_2026)
+    events.extend(EVENTS_2026)
+
     days = {}
     for row in wb["日历数据"].iter_rows(min_row=2, max_row=397, values_only=True):
         if not row[0]:
@@ -132,28 +207,13 @@ def load_source():
     for ev in events:
         events_by_date[ev["date"]].append(ev)
 
-    start = date(2026, 12, 1)
+    start = date(2026, 11, 1)
     end = date(2027, 12, 31)
     d = start
     while d <= end:
         key = iso(d)
         if key not in days:
-            # should not happen
-            days[key] = {
-                "date": key,
-                "weekday": d.weekday(),
-                "weekdayName": "星期" + "一二三四五六日"[d.weekday()],
-                "lunarMonth": None,
-                "lunarDay": None,
-                "lunarText": "",
-                "solarTerm": None,
-                "traditionalFestival": None,
-                "gregorianFestival": None,
-                "label": "",
-                "holiday": None,
-                "kind": "工作",
-                "companyEvents": [],
-            }
+            days[key] = lunar_record(d)
         rec = days[key]
         h = holiday_by_date.get(key)
         if h:
@@ -267,41 +327,54 @@ def build_holiday_blocks(holidays: list[dict], days: dict) -> list[dict]:
     blocks = []
     for fam, dates in families.items():
         dates = sorted(set(dates))
-        # expand through adjacent default weekends (not 班)
-        expanded = set(dates)
-        changed = True
-        while changed:
-            changed = False
-            lo, hi = min(expanded), max(expanded)
-            # fill gaps that are default weekends between lo and hi
-            d = lo
-            while d <= hi:
-                key = iso(d)
-                typ = (days.get(key) or {}).get("kind")
-                if typ == "周末" and d not in expanded:
-                    expanded.add(d)
-                    changed = True
-                d += timedelta(days=1)
-            # also extend one weekend after the block if immediately adjacent
-            nxt = hi + timedelta(days=1)
-            while nxt.year == 2027:
+        # Cluster dates that are consecutive or separated only by default weekends.
+        # Do not fill every weekend between distant same-name events
+        # (e.g. 2026 年终盘点 and 2027 年终盘点).
+        clusters = []
+        cur = [dates[0]]
+        for d in dates[1:]:
+            gap_ok = True
+            x = cur[-1] + timedelta(days=1)
+            while x < d:
+                typ = (days.get(iso(x)) or {}).get("kind")
+                if typ != "周末":
+                    gap_ok = False
+                    break
+                x += timedelta(days=1)
+            if gap_ok:
+                cur.append(d)
+            else:
+                clusters.append(cur)
+                cur = [d]
+        clusters.append(cur)
+
+        expanded = set()
+        PUBLIC = {"元旦", "春节", "清明", "劳动节", "端午", "中秋", "国庆"}
+        for cluster in clusters:
+            block = set(cluster)
+            changed = True
+            while changed:
+                changed = False
+                lo, hi = min(block), max(block)
+                d = lo
+                while d <= hi:
+                    typ = (days.get(iso(d)) or {}).get("kind")
+                    if typ == "周末" and d not in block:
+                        block.add(d)
+                        changed = True
+                    d += timedelta(days=1)
+                nxt = hi + timedelta(days=1)
                 typ = (days.get(iso(nxt)) or {}).get("kind")
                 if typ == "周末":
-                    expanded.add(nxt)
+                    block.add(nxt)
                     changed = True
-                    nxt += timedelta(days=1)
-                else:
-                    break
-            # Only prepend a preceding weekend for public-holiday families
-            # (e.g. 清明 4/5 周一 → 4/3–4/5). Do not swallow the Sunday
-            # before a one-day company rest such as 公司年会 (1/11).
-            PUBLIC = {"元旦", "春节", "清明", "劳动节", "端午", "中秋", "国庆"}
-            if fam in PUBLIC:
-                prev = lo - timedelta(days=1)
-                typ = (days.get(iso(prev)) or {}).get("kind")
-                if typ == "周末":
-                    expanded.add(prev)
-                    changed = True
+                if fam in PUBLIC:
+                    prev = lo - timedelta(days=1)
+                    typ = (days.get(iso(prev)) or {}).get("kind")
+                    if typ == "周末":
+                        block.add(prev)
+                        changed = True
+            expanded.update(block)
 
         # split into contiguous ranges
         ordered = sorted(expanded)
@@ -367,9 +440,9 @@ def build_ics(holidays: list[dict], events: list[dict], days: dict, stamp: datet
         "PRODID:-//2027日历//CN",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "X-WR-CALNAME:膳魔师 2027 行事历",
+        "X-WR-CALNAME:膳魔师行事历 2026.11–2027",
         "X-WR-TIMEZONE:Asia/Shanghai",
-        "X-WR-CALDESC:膳魔师(中国)家庭制品有限公司 2027年度行事历（休息日、调班上班日与公司活动）。优秀员工日如遇节假日顺延；旅游日待定。订阅日历在 iPhone 上可能不会触发提醒。",
+        "X-WR-CALDESC:膳魔师(中国)家庭制品有限公司行事历（2026年11月至2027年）。2026年11、12月按调整通知：年终盘点11/29–12/1，11/21与12/5调班上班。2027年终盘点仍为12/30–31。优秀员工日如遇节假日顺延；旅游日待定。订阅日历在 iPhone 上可能不会触发提醒。",
         "BEGIN:VTIMEZONE",
         "TZID:Asia/Shanghai",
         "X-LIC-LOCATION:Asia/Shanghai",
@@ -465,14 +538,14 @@ def validate_ics(path: Path, holidays: list[dict], events: list[dict]):
 
     cal = Calendar.from_ical(raw)
     name = str(cal.get("X-WR-CALNAME"))
-    assert name == "膳魔师 2027 行事历", name
+    assert name == "膳魔师行事历 2026.11–2027", name
     assert str(cal.get("X-WR-TIMEZONE")) == "Asia/Shanghai"
 
     vevents = list(cal.walk("VEVENT"))
     summaries = [str(e.get("SUMMARY")) for e in vevents]
-    # 8 班 days
+    # 8 班 days in 2027 + 11/21 and 12/5 in 2026
     ban = [e for e in vevents if str(e.get("SUMMARY")) == "调班上班"]
-    assert len(ban) == 8, f"expected 8 班 events, got {len(ban)}"
+    assert len(ban) == 10, f"expected 10 班 events, got {len(ban)}"
     for e in ban:
         alarms = list(e.walk("VALARM"))
         assert alarms, "班 event missing VALARM"
@@ -510,6 +583,17 @@ def validate_ics(path: Path, holidays: list[dict], events: list[dict]):
     assert nd
     assert nd[0].get("DTSTART").dt == date(2027, 10, 1)
     assert nd[0].get("DTEND").dt == date(2027, 10, 8)
+
+    # 2026 年终盘点 11/29–12/1 (exclusive end 12/2); 2027 盘点 unchanged 12/30–31
+    pandian = [e for e in vevents if "年终盘点" in str(e.get("SUMMARY"))]
+    assert len(pandian) == 2, [ (e.get("DTSTART").dt, e.get("DTEND").dt) for e in pandian ]
+    pandian = sorted(pandian, key=lambda e: e.get("DTSTART").dt)
+    assert pandian[0].get("DTSTART").dt == date(2026, 11, 29), pandian[0].get("DTSTART").dt
+    assert pandian[0].get("DTEND").dt == date(2026, 12, 2), pandian[0].get("DTEND").dt
+    assert pandian[1].get("DTSTART").dt == date(2027, 12, 30), pandian[1].get("DTSTART").dt
+    assert pandian[1].get("DTEND").dt == date(2028, 1, 1), pandian[1].get("DTEND").dt
+    ban_starts = {e.get("DTSTART").dt for e in ban}
+    assert date(2026, 11, 21) in ban_starts and date(2026, 12, 5) in ban_starts, ban_starts
 
     print(f"ICS validated: {len(vevents)} VEVENTs, {len(ban)} 班, {len(hol)} holiday blocks")
     for e in sorted(vevents, key=lambda x: x.get("DTSTART").dt if not isinstance(x.get("DTSTART").dt, datetime) else x.get("DTSTART").dt.date()):
@@ -596,14 +680,14 @@ def main():
         print("ERROR: counts do not match company calendar", file=sys.stderr)
         sys.exit(1)
     assert len(quotes) == 40, len(quotes)
-    assert len(holidays) == 37, len(holidays)
+    assert len(holidays) == 42, len(holidays)  # 37 in 2027 + 5 in 2026-11/12
 
     stamp = datetime.now(timezone.utc).replace(microsecond=0)
     payload = {
         "meta": {
             "title": "2027日历",
             "timezone": "Asia/Shanghai",
-            "range": {"start": "2026-12-01", "end": "2027-12-31"},
+            "range": {"start": "2026-11-01", "end": "2027-12-31"},
             "yearOverview": 2027,
             "weekStart": 1,
             "builtAt": stamp.isoformat().replace("+00:00", "Z"),
@@ -611,7 +695,8 @@ def main():
             "notes": [
                 "优秀员工日行事历印在 5 月 5 日，如遇节假日活动顺延（5 月 5 日为劳动节休息日），实际日期可能后延。",
                 "旅游日将根据订单实际状况待定，确定后会再更新。",
-                "2026 年 12 月无公司休班数据，按普通周末显示。",
+                "2026 年 11、12 月按《2026年11、12月行事历调整通知》：年终盘点为 11 月 29 日–12 月 1 日，11 月 21 日、12 月 5 日调班上班；12 月 12 日、19 日恢复正常休息，12 月 30 日、31 日恢复正常上班。",
+                "2027 年年终盘点 12 月 30 日、31 日仍按 2027 年度行事历，不受 2026 年调整影响。",
             ],
             "counts": {k: counts[k] for k in EXPECTED_COUNTS},
             "countsMatch": True,
@@ -630,7 +715,6 @@ def main():
     ICS_OUT.write_bytes(ics.encode("utf-8"))
     print(f"wrote {ICS_OUT} ({ICS_OUT.stat().st_size} bytes)")
     validate_ics(ICS_OUT, holidays, events)
-    make_icons()
     print("DONE")
 
 

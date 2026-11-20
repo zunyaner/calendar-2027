@@ -6,8 +6,8 @@
   const WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"];
   const IMPORTANCE = ["高", "中", "低"];
   const STATUS = ["未开办", "正常进行", "已完结"];
-  const MIN_YM = "2026-12";
-  const MAX_YM = "2027-12";
+  const FALLBACK_MIN_YM = "2026-11";
+  const FALLBACK_MAX_YM = "2027-12";
 
   const $app = document.getElementById("app");
   let DATA = null;
@@ -18,6 +18,19 @@
   /* ---------- time & helpers ---------- */
   function todayISO() {
     return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Shanghai" });
+  }
+  function rangeYM() {
+    const start = (DATA && DATA.meta && DATA.meta.range && DATA.meta.range.start) || (FALLBACK_MIN_YM + "-01");
+    const end = (DATA && DATA.meta && DATA.meta.range && DATA.meta.range.end) || (FALLBACK_MAX_YM + "-31");
+    return { min: start.slice(0, 7), max: end.slice(0, 7), start: start, end: end };
+  }
+  function currentMonthYM() {
+    return clampYM(todayISO().slice(0, 7));
+  }
+  function todayInRange() {
+    const r = rangeYM();
+    const t = todayISO();
+    return t >= r.start && t <= r.end;
   }
   function weekdayName(iso) {
     const [y, m, d] = iso.split("-").map(Number);
@@ -98,8 +111,9 @@
     return { view: "year", ym: null, day: parts[0] === "d" ? parts[1] : null, settings: false, today };
   }
   function clampYM(ym) {
-    if (ym < MIN_YM) return MIN_YM;
-    if (ym > MAX_YM) return MAX_YM;
+    const r = rangeYM();
+    if (ym < r.min) return r.min;
+    if (ym > r.max) return r.max;
     return ym;
   }
   function go(hash) {
@@ -172,9 +186,7 @@
     const d = rec(today);
     const lunar = d
       ? [d.lunarText, d.solarTerm, d.traditionalFestival, d.gregorianFestival].filter(Boolean).join(" · ")
-      : (today < DATA.meta.range.start || today > DATA.meta.range.end
-        ? "今天不在日历范围内（可先看 2026年12月或 2027 年）"
-        : "");
+      : (todayInRange() ? "" : "今天不在日历范围内");
     const statusLine = d && d.holiday
       ? `${d.holiday.type === "班" ? "调班上班" : "休息"} · ${d.holiday.name}`
       : (d && (d.kind === "周末") ? "周末" : "");
@@ -211,7 +223,8 @@
           </div>
         </section>
         ${standalone ? "" : `<p class="hint">用 <strong>Safari</strong> 打开本页，点底部分享按钮，再选「添加到主屏幕」，就可以像 App 一样从桌面打开。</p>`}
-        <div class="sec-title">全年总览 <button data-go="#/m/2026-12">2026年12月</button></div>
+        ${thisMonthBlock(today)}
+        <div class="sec-title">全年总览</div>
         <div class="legend">
           <span><i style="background:var(--国定)"></i>国定</span>
           <span><i style="background:var(--休)"></i>休</span>
@@ -226,14 +239,23 @@
     bindNav();
   }
 
+  function thisMonthBlock(today) {
+    if (!todayInRange()) return "";
+    const ym = currentMonthYM();
+    const { y, m } = parseYM(ym);
+    return `<div class="sec-title">本月 <button data-go="#/m/${ym}">打开详情</button></div>
+        <div class="this-month">${miniMonth(y, m, today, true)}</div>`;
+  }
+
   function formatLong(iso) {
     const [y, m, d] = iso.split("-");
     return `${Number(y)}年${Number(m)}月${Number(d)}日`;
   }
 
-  function miniMonth(y, m, today) {
+  function miniMonth(y, m, today, featured) {
     const cells = monthCells(y, m);
     const ym = y + "-" + pad(m);
+    const title = featured ? (y + "年" + m + "月") : (m + "月");
     const daysHtml = cells.map((iso) => {
       if (!iso) return `<div class="cell is-muted"></div>`;
       const d = rec(iso);
@@ -247,8 +269,8 @@
       ].filter(Boolean).join(" ");
       return `<div class="${cls}"><span class="n">${Number(iso.slice(-2))}</span>${lab ? `<span class="lab">${escapeHtml(lab)}</span>` : ""}</div>`;
     }).join("");
-    return `<button type="button" class="mini" data-go="#/m/${ym}">
-      <div class="mtitle">${m}月</div>
+    return `<button type="button" class="mini${featured ? " featured" : ""}" data-go="#/m/${ym}">
+      <div class="mtitle">${title}</div>
       <div class="dow">${WEEKDAYS.map((w) => `<span>${w}</span>`).join("")}</div>
       <div class="days">${daysHtml}</div>
     </button>`;
@@ -259,8 +281,8 @@
     const today = r.today;
     const prev = addMonth(r.ym, -1);
     const next = addMonth(r.ym, 1);
-    const canPrev = r.ym > MIN_YM;
-    const canNext = r.ym < MAX_YM;
+    const canPrev = r.ym > rangeYM().min;
+    const canNext = r.ym < rangeYM().max;
     const title = `${y}年${m}月`;
     const cells = monthCells(y, m);
     const grid = cells.map((iso) => {

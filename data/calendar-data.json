@@ -3,17 +3,18 @@
     "title": "2027日历",
     "timezone": "Asia/Shanghai",
     "range": {
-      "start": "2026-12-01",
+      "start": "2026-11-01",
       "end": "2027-12-31"
     },
     "yearOverview": 2027,
     "weekStart": 1,
-    "builtAt": "2026-11-20T08:19:41Z",
+    "builtAt": "2026-11-20T08:50:54Z",
     "source": "膳魔师(中国)家庭制品有限公司《2027年度行事历日程计划表（执行案）》",
     "notes": [
       "优秀员工日行事历印在 5 月 5 日，如遇节假日活动顺延（5 月 5 日为劳动节休息日），实际日期可能后延。",
       "旅游日将根据订单实际状况待定，确定后会再更新。",
-      "2026 年 12 月无公司休班数据，按普通周末显示。"
+      "2026 年 11、12 月按《2026年11、12月行事历调整通知》：年终盘点为 11 月 29 日–12 月 1 日，11 月 21 日、12 月 5 日调班上班；12 月 12 日、19 日恢复正常休息，12 月 30 日、31 日恢复正常上班。",
+      "2027 年年终盘点 12 月 30 日、31 日仍按 2027 年度行事历，不受 2026 年调整影响。"
     ],
     "counts": {
       "星期假日": 104,
@@ -457,6 +458,41 @@
       "name": "年终盘点预定日（与12/26调班）",
       "short": "年终盘点",
       "source": "公司行事历"
+    },
+    {
+      "date": "2026-11-21",
+      "type": "班",
+      "name": "周六上班（与11/30盘点日调班）",
+      "short": "调班上班",
+      "source": "2026年11、12月行事历调整通知"
+    },
+    {
+      "date": "2026-11-29",
+      "type": "休",
+      "name": "年终盘点预定日",
+      "short": "年终盘点",
+      "source": "2026年11、12月行事历调整通知"
+    },
+    {
+      "date": "2026-11-30",
+      "type": "休",
+      "name": "年终盘点预定日（与11/21调班）",
+      "short": "年终盘点",
+      "source": "2026年11、12月行事历调整通知"
+    },
+    {
+      "date": "2026-12-01",
+      "type": "休",
+      "name": "年终盘点调休（与12/5调班）",
+      "short": "年终盘点",
+      "source": "2026年11、12月行事历调整通知"
+    },
+    {
+      "date": "2026-12-05",
+      "type": "班",
+      "name": "周六上班（与12/1调休）",
+      "short": "调班上班",
+      "source": "2026年11、12月行事历调整通知"
     }
   ],
   "events": [
@@ -479,6 +515,21 @@
       "date": "2027-12-31",
       "name": "年终盘点",
       "note": "预定日"
+    },
+    {
+      "date": "2026-11-29",
+      "name": "年终盘点",
+      "note": "调整后预定日"
+    },
+    {
+      "date": "2026-11-30",
+      "name": "年终盘点",
+      "note": "与11/21调班"
+    },
+    {
+      "date": "2026-12-01",
+      "name": "年终盘点",
+      "note": "调休，与12/5调班"
     }
   ],
   "days": {
@@ -493,9 +544,21 @@
       "traditionalFestival": null,
       "gregorianFestival": null,
       "label": "廿三",
-      "holiday": null,
-      "kind": "工作",
-      "companyEvents": []
+      "holiday": {
+        "date": "2026-12-01",
+        "type": "休",
+        "name": "年终盘点调休（与12/5调班）",
+        "short": "年终盘点",
+        "source": "2026年11、12月行事历调整通知"
+      },
+      "kind": "休",
+      "companyEvents": [
+        {
+          "date": "2026-12-01",
+          "name": "年终盘点",
+          "note": "调休，与12/5调班"
+        }
+      ]
     },
     "2026-12-02": {
       "date": "2026-12-02",
@@ -553,8 +616,14 @@
       "traditionalFestival": null,
       "gregorianFestival": null,
       "label": "廿七",
-      "holiday": null,
-      "kind": "周末",
+      "holiday": {
+        "date": "2026-12-05",
+        "type": "班",
+        "name": "周六上班（与12/1调休）",
+        "short": "调班上班",
+        "source": "2026年11、12月行事历调整通知"
+      },
+      "kind": "班",
       "companyEvents": []
     },
     "2026-12-06": {
@@ -6665,6 +6734,486 @@
           "date": "2027-12-31",
           "name": "年终盘点",
           "note": "预定日"
+        }
+      ]
+    },
+    "2026-11-01": {
+      "date": "2026-11-01",
+      "weekday": 6,
+      "weekdayName": "星期日",
+      "lunarMonth": 9,
+      "lunarDay": 23,
+      "lunarText": "九月廿三",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿三",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-02": {
+      "date": "2026-11-02",
+      "weekday": 0,
+      "weekdayName": "星期一",
+      "lunarMonth": 9,
+      "lunarDay": 24,
+      "lunarText": "九月廿四",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿四",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-03": {
+      "date": "2026-11-03",
+      "weekday": 1,
+      "weekdayName": "星期二",
+      "lunarMonth": 9,
+      "lunarDay": 25,
+      "lunarText": "九月廿五",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿五",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-04": {
+      "date": "2026-11-04",
+      "weekday": 2,
+      "weekdayName": "星期三",
+      "lunarMonth": 9,
+      "lunarDay": 26,
+      "lunarText": "九月廿六",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿六",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-05": {
+      "date": "2026-11-05",
+      "weekday": 3,
+      "weekdayName": "星期四",
+      "lunarMonth": 9,
+      "lunarDay": 27,
+      "lunarText": "九月廿七",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿七",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-06": {
+      "date": "2026-11-06",
+      "weekday": 4,
+      "weekdayName": "星期五",
+      "lunarMonth": 9,
+      "lunarDay": 28,
+      "lunarText": "九月廿八",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿八",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-07": {
+      "date": "2026-11-07",
+      "weekday": 5,
+      "weekdayName": "星期六",
+      "lunarMonth": 9,
+      "lunarDay": 29,
+      "lunarText": "九月廿九",
+      "solarTerm": "立冬",
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "立冬",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-08": {
+      "date": "2026-11-08",
+      "weekday": 6,
+      "weekdayName": "星期日",
+      "lunarMonth": 9,
+      "lunarDay": 30,
+      "lunarText": "九月三十",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "三十",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-09": {
+      "date": "2026-11-09",
+      "weekday": 0,
+      "weekdayName": "星期一",
+      "lunarMonth": 10,
+      "lunarDay": 1,
+      "lunarText": "十月初一",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十月",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-10": {
+      "date": "2026-11-10",
+      "weekday": 1,
+      "weekdayName": "星期二",
+      "lunarMonth": 10,
+      "lunarDay": 2,
+      "lunarText": "十月初二",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初二",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-11": {
+      "date": "2026-11-11",
+      "weekday": 2,
+      "weekdayName": "星期三",
+      "lunarMonth": 10,
+      "lunarDay": 3,
+      "lunarText": "十月初三",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初三",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-12": {
+      "date": "2026-11-12",
+      "weekday": 3,
+      "weekdayName": "星期四",
+      "lunarMonth": 10,
+      "lunarDay": 4,
+      "lunarText": "十月初四",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初四",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-13": {
+      "date": "2026-11-13",
+      "weekday": 4,
+      "weekdayName": "星期五",
+      "lunarMonth": 10,
+      "lunarDay": 5,
+      "lunarText": "十月初五",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初五",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-14": {
+      "date": "2026-11-14",
+      "weekday": 5,
+      "weekdayName": "星期六",
+      "lunarMonth": 10,
+      "lunarDay": 6,
+      "lunarText": "十月初六",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初六",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-15": {
+      "date": "2026-11-15",
+      "weekday": 6,
+      "weekdayName": "星期日",
+      "lunarMonth": 10,
+      "lunarDay": 7,
+      "lunarText": "十月初七",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初七",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-16": {
+      "date": "2026-11-16",
+      "weekday": 0,
+      "weekdayName": "星期一",
+      "lunarMonth": 10,
+      "lunarDay": 8,
+      "lunarText": "十月初八",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初八",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-17": {
+      "date": "2026-11-17",
+      "weekday": 1,
+      "weekdayName": "星期二",
+      "lunarMonth": 10,
+      "lunarDay": 9,
+      "lunarText": "十月初九",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初九",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-18": {
+      "date": "2026-11-18",
+      "weekday": 2,
+      "weekdayName": "星期三",
+      "lunarMonth": 10,
+      "lunarDay": 10,
+      "lunarText": "十月初十",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "初十",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-19": {
+      "date": "2026-11-19",
+      "weekday": 3,
+      "weekdayName": "星期四",
+      "lunarMonth": 10,
+      "lunarDay": 11,
+      "lunarText": "十月十一",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十一",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-20": {
+      "date": "2026-11-20",
+      "weekday": 4,
+      "weekdayName": "星期五",
+      "lunarMonth": 10,
+      "lunarDay": 12,
+      "lunarText": "十月十二",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十二",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-21": {
+      "date": "2026-11-21",
+      "weekday": 5,
+      "weekdayName": "星期六",
+      "lunarMonth": 10,
+      "lunarDay": 13,
+      "lunarText": "十月十三",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十三",
+      "holiday": {
+        "date": "2026-11-21",
+        "type": "班",
+        "name": "周六上班（与11/30盘点日调班）",
+        "short": "调班上班",
+        "source": "2026年11、12月行事历调整通知"
+      },
+      "kind": "班",
+      "companyEvents": []
+    },
+    "2026-11-22": {
+      "date": "2026-11-22",
+      "weekday": 6,
+      "weekdayName": "星期日",
+      "lunarMonth": 10,
+      "lunarDay": 14,
+      "lunarText": "十月十四",
+      "solarTerm": "小雪",
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "小雪",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-23": {
+      "date": "2026-11-23",
+      "weekday": 0,
+      "weekdayName": "星期一",
+      "lunarMonth": 10,
+      "lunarDay": 15,
+      "lunarText": "十月十五",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十五",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-24": {
+      "date": "2026-11-24",
+      "weekday": 1,
+      "weekdayName": "星期二",
+      "lunarMonth": 10,
+      "lunarDay": 16,
+      "lunarText": "十月十六",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十六",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-25": {
+      "date": "2026-11-25",
+      "weekday": 2,
+      "weekdayName": "星期三",
+      "lunarMonth": 10,
+      "lunarDay": 17,
+      "lunarText": "十月十七",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十七",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-26": {
+      "date": "2026-11-26",
+      "weekday": 3,
+      "weekdayName": "星期四",
+      "lunarMonth": 10,
+      "lunarDay": 18,
+      "lunarText": "十月十八",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十八",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-27": {
+      "date": "2026-11-27",
+      "weekday": 4,
+      "weekdayName": "星期五",
+      "lunarMonth": 10,
+      "lunarDay": 19,
+      "lunarText": "十月十九",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "十九",
+      "holiday": null,
+      "kind": "工作",
+      "companyEvents": []
+    },
+    "2026-11-28": {
+      "date": "2026-11-28",
+      "weekday": 5,
+      "weekdayName": "星期六",
+      "lunarMonth": 10,
+      "lunarDay": 20,
+      "lunarText": "十月二十",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "二十",
+      "holiday": null,
+      "kind": "周末",
+      "companyEvents": []
+    },
+    "2026-11-29": {
+      "date": "2026-11-29",
+      "weekday": 6,
+      "weekdayName": "星期日",
+      "lunarMonth": 10,
+      "lunarDay": 21,
+      "lunarText": "十月廿一",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿一",
+      "holiday": {
+        "date": "2026-11-29",
+        "type": "休",
+        "name": "年终盘点预定日",
+        "short": "年终盘点",
+        "source": "2026年11、12月行事历调整通知"
+      },
+      "kind": "休",
+      "companyEvents": [
+        {
+          "date": "2026-11-29",
+          "name": "年终盘点",
+          "note": "调整后预定日"
+        }
+      ]
+    },
+    "2026-11-30": {
+      "date": "2026-11-30",
+      "weekday": 0,
+      "weekdayName": "星期一",
+      "lunarMonth": 10,
+      "lunarDay": 22,
+      "lunarText": "十月廿二",
+      "solarTerm": null,
+      "traditionalFestival": null,
+      "gregorianFestival": null,
+      "label": "廿二",
+      "holiday": {
+        "date": "2026-11-30",
+        "type": "休",
+        "name": "年终盘点预定日（与11/21调班）",
+        "short": "年终盘点",
+        "source": "2026年11、12月行事历调整通知"
+      },
+      "kind": "休",
+      "companyEvents": [
+        {
+          "date": "2026-11-30",
+          "name": "年终盘点",
+          "note": "与11/21调班"
         }
       ]
     }

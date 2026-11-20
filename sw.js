@@ -1,5 +1,5 @@
 /* 2027日历 service worker — static, cache-first, relative URLs */
-const CACHE = "cal2027-v1";
+const CACHE = "cal2027-v2";
 const ASSETS = [
   "./",
   "./index.html",
